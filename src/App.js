@@ -1,26 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+import "tachyons";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      temperature: "",
+      description: "",
+    };
+  }
+  componentDidMount = () => {
+    if (navigator.geolocation.getCurrentPosition) {
+      const getlocation = (pos) => {
+        const url = `http://api.openweathermap.org/data/2.5/weather?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&units=metric&appid=2d6f5be113fc5046489e73c13784963a`;
+        fetch(url)
+          .then((Response) => Response.json())
+          .then((val) => {
+            this.setState({
+              temperature: val.main.temp,
+              description: val.weather[0].description,
+            });
+            console.log(val);
+          })
+          .catch((err) => console.log(err));
+      };
+      navigator.geolocation.getCurrentPosition(getlocation);
+    }
+  };
+
+  render() {
+    return (
+      <div>
+        <header className="f2 white tc ma4">weather app</header>
+        {this.state.description}
+        <p>{this.state.temperature}</p>
+      </div>
+    );
+  }
 }
 
 export default App;
