@@ -1,43 +1,54 @@
 import React, { Component } from "react";
+import Location from "./components/Location/Location";
 import "./App.css";
 import "tachyons";
+import Card from "./components/Card";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      temperature: "",
-      description: "",
+      cords: { lat: 12.904759, lon: 80.089081 },
+      data: {},
     };
   }
   componentDidMount = () => {
-    if (navigator.geolocation.getCurrentPosition) {
-      const getlocation = (pos) => {
-        const url = `http://api.openweathermap.org/data/2.5/weather?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&units=metric&appid=2d6f5be113fc5046489e73c13784963a`;
-        fetch(url)
-          .then((Response) => Response.json())
-          .then((val) => {
-            this.setState({
-              temperature: val.main.temp,
-              description: val.weather[0].description,
-            });
-            console.log(val);
-          })
-          .catch((err) => console.log(err));
-      };
-      navigator.geolocation.getCurrentPosition(getlocation);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((success) => {
+        let newcords = {
+          lat: success.coords.latitude,
+          lon: success.coords.longitude,
+        };
+        this.setState({ cords: newcords });
+      });
+      fetch(
+        `http://api.weatherstack.com/current?access_key=df621d13cc5f043cf29066caf9832087&query=${this.state.cords.lat},${this.state.cords.lon}`
+      )
+        .then((Response) => Response.json())
+        .then((val) => {
+          let weatherData = {
+            temp: val.current.temperature,
+            des: val.current.weather_descriptions[0],
+            img: val.current.weather_icons[0],
+            city: val.location.name,
+            region: val.location.region,
+            country: val.location.country,
+          };
+          console.log(val);
+          this.setState({ data: weatherData });
+        })
+        .catch((err) => err.message);
     }
   };
 
   render() {
     return (
       <div>
-        <header className="f2 white tc ma4">weather app</header>
-        {this.state.description}
-        <p>{this.state.temperature}</p>
+        <header className="f1 white tc ma4">Weather app</header>
+        <Location getLocationByCity={this.getLocationByCity} />
+        <Card data={this.state.data} />
       </div>
     );
   }
 }
-
 export default App;
