@@ -24,7 +24,7 @@ class App extends Component {
         this.setState({ cords: newcords });
       });
       fetch(
-        `http://api.weatherstack.com/current?access_key=df621d13cc5f043cf29066caf9832087&query=${this.state.cords.lat},${this.state.cords.lon}`
+        `https://cors-anywhere.herokuapp.com/http://api.weatherstack.com/current?access_key=df621d13cc5f043cf29066caf9832087&query=${this.state.cords.lat},${this.state.cords.lon}`
       )
         .then((Response) => Response.json())
         .then((val) => {
@@ -36,7 +36,6 @@ class App extends Component {
             region: val.location.region,
             country: val.location.country,
           };
-          console.log(val);
           this.setState({ data: weatherData });
         })
         .catch((err) => err.message);
@@ -47,9 +46,9 @@ class App extends Component {
     this.setState({ city: event.target.value });
   };
 
-  getWeatherByCity = (event) => {
+  getWeatherByCity = () => {
     fetch(
-      `http://api.weatherstack.com/current?access_key=df621d13cc5f043cf29066caf9832087&query=${this.state.city}`
+      `https://cors-anywhere.herokuapp.com/http://api.weatherstack.com/current?access_key=df621d13cc5f043cf29066caf9832087&query=${this.state.city}`
     )
       .then((Response) => Response.json())
       .then((val) => {
@@ -61,7 +60,6 @@ class App extends Component {
           region: val.location.region,
           country: val.location.country,
         };
-        console.log(val);
         this.setState({ data: weatherData });
       })
       .catch((err) => err.message);
@@ -70,7 +68,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <header className="f1 white tc ma4">Weather app</header>
+        <header className="f1 dark-green tc ma3 b">Weather App</header>
         <Location
           getLocation={this.getLocation}
           getWeather={this.getWeatherByCity}

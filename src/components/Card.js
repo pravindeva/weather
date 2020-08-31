@@ -4,7 +4,7 @@ export default class Card extends Component {
   render() {
     const { temp, city, region, des, img, country } = this.props.data;
     return (
-      <div className="bg-white dib br3 ma5 tc bw3 grow w-50 green">
+      <div className="bg-white dib br3 mt4 tc bw3 grow ph5 dark-green b">
         <h1>
           {temp}
           <sup>o</sup>C
